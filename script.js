@@ -327,6 +327,7 @@ function updateDisplay() {
 function checkGameState() {
     if (!canMakeMove() && !hasWon()) {
         document.getElementById('restart-screen').classList.remove('hidden');
+        document.getElementById('win-screen').classList.add('hidden'); // Sicherstellen, dass der Win-Screen nicht angezeigt wird
     } else {
         document.getElementById('restart-screen').classList.add('hidden');
     }
