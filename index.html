@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klassisches Solitär</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="top-row">
+            <div id="talon" class="pile"></div>
+            <div id="waste" class="pile"></div>
+            <div id="foundations">
+                <div id="foundation-0" class="pile foundation" data-suit="hearts"></div>
+                <div id="foundation-1" class="pile foundation" data-suit="diamonds"></div>
+                <div id="foundation-2" class="pile foundation" data-suit="clubs"></div>
+                <div id="foundation-3" class="pile foundation" data-suit="spades"></div>
+            </div>
+        </div>
+        <div id="tableau">
+            <div id="tableau-0" class="pile tableau-pile"></div>
+            <div id="tableau-1" class="pile tableau-pile"></div>
+            <div id="tableau-2" class="pile tableau-pile"></div>
+            <div id="tableau-3" class="pile tableau-pile"></div>
+            <div id="tableau-4" class="pile tableau-pile"></div>
+            <div id="tableau-5" class="pile tableau-pile"></div>
+            <div id="tableau-6" class="pile tableau-pile"></div>
+        </div>
+        <div id="win-screen" class="hidden">
+            <h1>Herzlichen Glückwunsch!</h1>
+            <p>Du hast das Spiel gewonnen!</p>
+            <button id="new-game-win">Neues Spiel</button>
+        </div>
+        <div id="restart-screen" class="hidden">
+            <p>Keine Züge mehr möglich.</p>
+            <button id="new-game-restart">Neues Spiel</button>
+        </div>
+        <button id="autoshuffle-button" class="hidden">Autoshuffle</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

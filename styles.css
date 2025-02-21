@@ -1,0 +1,99 @@
+body {
+    background-color: #2e8b57; /* Grüner Spieltisch */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+#game-container {
+    width: 90%;
+    max-width: 900px; /* Reduzierte maximale Breite */
+    margin: 20px auto;
+}
+
+#top-row {
+    display: flex;
+    justify-content: flex-start; /* Links ausrichten */
+    gap: 10px; /* Reduzierter Abstand */
+    margin-bottom: 10px; /* Weniger Abstand nach unten */
+}
+
+.pile {
+    width: 80px;
+    height: 120px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px dashed #fff;
+    border-radius: 5px;
+    position: relative;
+}
+
+#talon, #waste {
+    cursor: pointer;
+}
+
+#foundations {
+    display: flex;
+    gap: 5px; /* Reduzierter Abstand zwischen Fundamentstapeln */
+    margin-left: 20px; /* Kleiner Abstand zum Talon/Ablagestapel */
+}
+
+#tableau {
+    display: flex;
+    gap: 5px; /* Reduzierter Abstand zwischen Spielstapeln */
+}
+
+.tableau-pile {
+    min-height: 200px;
+}
+
+.card {
+    width: 80px;
+    height: 120px;
+    position: absolute;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.card.draggable:hover {
+    transform: translateY(-5px);
+}
+
+.card.face-down {
+    background-color: #4682b4;
+    border: 1px solid #fff;
+}
+
+.hidden {
+    display: none;
+}
+
+#win-screen, #restart-screen {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4682b4;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #5a9bd4;
+}
