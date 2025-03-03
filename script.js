@@ -11,7 +11,7 @@ const rankOrder = ['ACE', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'JACK', 
 
 // Spiel initialisieren
 async function initGame() {
-    const res = await fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1');
+    const res = await fetch('https://www.deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1');
     const data = await res.json();
     deckId = data.deck_id;
 
