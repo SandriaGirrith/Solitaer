@@ -145,8 +145,12 @@
             background-color: #FF9800;
         }
         
-        .shuffle-btn:hover {
-            background-color: #F57C00;
+        .auto-btn {
+            background-color: #9C27B0;
+        }
+        
+        .auto-btn:hover {
+            background-color: #7B1FA2;
         }
         
         .hint-btn {
@@ -202,6 +206,7 @@
         <div class="controls">
             <button id="new-game">Neues Spiel</button>
             <button id="hint" class="hint-btn">Hinweis</button>
+            <button id="auto-complete-btn" class="auto-btn">Auto-Vervollständigen</button>
         </div>
         
         <div class="top-row">
@@ -964,6 +969,32 @@
                     document.getElementById('win-screen').classList.remove('hidden');
                     document.getElementById('message').classList.add('hidden');
                     document.getElementById('deadend-message').classList.add('hidden');
+                    
+                    // Konfetti-Animation starten
+                    confetti({
+                        particleCount: 200,
+                        spread: 160,
+                        origin: { y: 0.6 }
+                    });
+                    
+                    // Wiederholtes Konfetti für einen schöneren Effekt
+                    setTimeout(() => {
+                        confetti({
+                            particleCount: 100,
+                            angle: 60,
+                            spread: 70,
+                            origin: { x: 0 }
+                        });
+                    }, 500);
+                    
+                    setTimeout(() => {
+                        confetti({
+                            particleCount: 100,
+                            angle: 120,
+                            spread: 70,
+                            origin: { x: 1 }
+                        });
+                    }, 1000);
                 } else {
                     document.getElementById('win-screen').classList.add('hidden');
                 }
@@ -998,57 +1029,108 @@
                 // Entferne alle Highlights
                 clearHighlights();
                 
-                // Wiederhole, bis keine Karten mehr bewegt werden können
-                let moved;
-                do {
-                    moved = false;
-                    
-                    // Prüfe Karten vom Waste
-                    while (wasteCards.length > 0) {
-                        const card = wasteCards[wasteCards.length - 1];
-                        const suit = card.suit;
-                        const foundationIndex = suits.indexOf(suit);
-                        
-                        if (canMoveCard(card, `foundation-${foundationIndex}`, foundationPiles[foundationIndex])) {
-                            wasteCards.pop();
-                            foundationPiles[foundationIndex].push(card);
-                            moved = true;
-                        } else {
-                            break;
-                        }
-                    }
-                    
-                    // Prüfe Karten vom Tableau
-                    for (let i = 0; i < tableauPiles.length; i++) {
-                        if (tableauPiles[i].length > 0) {
-                            const card = tableauPiles[i][tableauPiles[i].length - 1];
-                            const suit = card.suit;
-                            const foundationIndex = suits.indexOf(suit);
-                            
-                            if (canMoveCard(card, `foundation-${foundationIndex}`, foundationPiles[foundationIndex])) {
+                // Schrittweise Vervollständigung mit Animation
+                completeStep();
+            }
+            
+            // Führt die Auto-Complete-Funktion schrittweise aus
+            function completeStep() {
+                // Suche nach dem nächsten Zug
+                let cardMoved = false;
+                
+                // 1. Versuche, Asse auf die Foundation zu legen
+                for (let i = 0; i < tableauPiles.length; i++) {
+                    if (tableauPiles[i].length > 0) {
+                        const card = tableauPiles[i][tableauPiles[i].length - 1];
+                        if (card.value === 'A') {
+                            const foundationIndex = suits.indexOf(card.suit);
+                            if (foundationPiles[foundationIndex].length === 0) {
+                                // Bewege das Ass auf den Foundation-Stapel
                                 tableauPiles[i].pop();
                                 foundationPiles[foundationIndex].push(card);
-                                moved = true;
+                                cardMoved = true;
                                 break;
                             }
                         }
                     }
-                    
-                    // Karten vom Talon ziehen, wenn nötig
-                    if (!moved && talonCards.length > 0) {
-                        drawFromTalon();
-                        moved = true;
+                }
+                
+                // 2. Versuche auch, Asse vom Waste zu bewegen
+                if (!cardMoved && wasteCards.length > 0) {
+                    const card = wasteCards[wasteCards.length - 1];
+                    if (card.value === 'A') {
+                        const foundationIndex = suits.indexOf(card.suit);
+                        if (foundationPiles[foundationIndex].length === 0) {
+                            // Bewege das Ass auf den Foundation-Stapel
+                            wasteCards.pop();
+                            foundationPiles[foundationIndex].push(card);
+                            cardMoved = true;
+                        }
                     }
-                    
-                    // Aktualisiere die Anzeige
-                    updateDisplay();
-                    
-                    // Prüfe, ob das Spiel gewonnen ist
-                    if (hasWon()) {
-                        break;
+                }
+                
+                // 3. Versuche, Karten auf die Foundation zu legen (in aufsteigender Reihenfolge)
+                if (!cardMoved) {
+                    // Überprüfe zuerst Waste
+                    if (wasteCards.length > 0) {
+                        const card = wasteCards[wasteCards.length - 1];
+                        const foundationIndex = suits.indexOf(card.suit);
+                        const foundationPile = foundationPiles[foundationIndex];
+                        
+                        if (foundationPile.length > 0) {
+                            const topFoundationCard = foundationPile[foundationPile.length - 1];
+                            
+                            if (rankOrder.indexOf(card.value) === rankOrder.indexOf(topFoundationCard.value) + 1) {
+                                // Bewege die Karte auf den Foundation-Stapel
+                                wasteCards.pop();
+                                foundationPiles[foundationIndex].push(card);
+                                cardMoved = true;
+                            }
+                        }
                     }
-                    
-                } while (moved);
+                }
+                
+                // 4. Dann Tableau überprüfen
+                if (!cardMoved) {
+                    for (let i = 0; i < tableauPiles.length; i++) {
+                        if (tableauPiles[i].length > 0) {
+                            const card = tableauPiles[i][tableauPiles[i].length - 1];
+                            const foundationIndex = suits.indexOf(card.suit);
+                            const foundationPile = foundationPiles[foundationIndex];
+                            
+                            if (foundationPile.length > 0) {
+                                const topFoundationCard = foundationPile[foundationPile.length - 1];
+                                
+                                if (rankOrder.indexOf(card.value) === rankOrder.indexOf(topFoundationCard.value) + 1) {
+                                    // Bewege die Karte auf den Foundation-Stapel
+                                    tableauPiles[i].pop();
+                                    foundationPiles[foundationIndex].push(card);
+                                    cardMoved = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // 5. Wenn nötig, Karten vom Talon ziehen
+                if (!cardMoved && talonCards.length > 0) {
+                    drawFromTalon();
+                    cardMoved = true;
+                }
+                
+                // Aktualisiere die Anzeige
+                updateDisplay();
+                
+                // Wenn das Spiel gewonnen ist, oder keine Karten mehr bewegt wurden
+                if (hasWon()) {
+                    return;
+                }
+                
+                // Wenn eine Karte bewegt wurde, führe den nächsten Schritt aus
+                if (cardMoved) {
+                    setTimeout(completeStep, 100); // Kurze Verzögerung für Animation
+                }
             }
             
             // Prüft, ob alle Karten sichtbar/aufgedeckt sind
@@ -1143,6 +1225,7 @@
             document.getElementById('new-game-win').addEventListener('click', resetGame);
             document.getElementById('shuffle-cards').addEventListener('click', shuffleCards);
             document.getElementById('hint').addEventListener('click', showHint);
+            document.getElementById('auto-complete-btn').addEventListener('click', autoComplete);
             
             // Spiel zurücksetzen
             function resetGame() {
