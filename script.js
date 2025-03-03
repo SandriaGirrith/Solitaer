@@ -15,7 +15,7 @@ async function initGame() {
     const data = await res.json();
     deckId = data.deck_id;
 
-    const drawRes = await fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=52`);
+    const drawRes = await fetch(`https://www.deckofcardsapi.com/api/deck/new/shuffle/?deck_count=52');
     const deck = await drawRes.json();
     const cards = deck.cards;
 
